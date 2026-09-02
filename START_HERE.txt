@@ -1,0 +1,23 @@
+TITANIC SURVIVAL ML - START HERE
+
+1. Open this folder in VS Code.
+2. Open Terminal.
+3. Create environment:
+   python -m venv .venv
+4. Activate:
+   .venv\Scripts\activate
+5. Install:
+   pip install -r requirements.txt
+6. Run in this order:
+   python src/data_analysis.py
+   python src/eda.py
+   python src/train_models.py
+   python src/evaluate.py
+   python src/generate_predictions.py
+   python src/predict.py
+
+The final trained model is saved as:
+models/titanic_model.pkl
+
+Test predictions are saved as:
+outputs/results/titanic_predictions.csv
