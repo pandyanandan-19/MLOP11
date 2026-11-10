@@ -25,14 +25,29 @@ def run_script(script_path):
     return result.returncode == 0
 
 
-def record_bundle_only_report():
+def is_command_ready(command, timeout=10):
+    """Return True when the external CLI command succeeds within the timeout."""
+    try:
+        result = subprocess.run(
+            command,
+            cwd=PROJECT_ROOT,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            timeout=timeout,
+        )
+        return result.returncode == 0
+    except (OSError, subprocess.TimeoutExpired):
+        return False
+
+
+def record_bundle_only_report(reason):
     with METADATA_PATH.open("r", encoding="utf-8") as f:
         metadata = json.load(f)
 
     DEPLOYMENT_REPORT.parent.mkdir(parents=True, exist_ok=True)
     report = {
         "status": "bundle_prepared_only",
-        "reason": "docker or kubectl executable not available in current environment",
+        "reason": reason,
         "model_name": metadata["model_name"],
         "model_version": metadata["model_version"],
         "run_id": metadata["run_id"],
@@ -75,9 +90,19 @@ def main():
 
     print("[SUCCESS] Deployment artifacts prepared.")
 
-    if not shutil.which("docker") or not shutil.which("kubectl"):
-        print("[WARN] Docker or kubectl not found on host; skipping container/Kubernetes rollout.")
-        record_bundle_only_report()
+    docker_ready = shutil.which("docker") is not None and is_command_ready(["docker", "info"])
+    kubectl_ready = shutil.which("kubectl") is not None and is_command_ready(
+        ["kubectl", "cluster-info", "--request-timeout=5s"]
+    )
+
+    if not docker_ready or not kubectl_ready:
+        print(
+            "[WARN] Docker daemon or Kubernetes cluster not available; "
+            "skipping container/Kubernetes rollout."
+        )
+        record_bundle_only_report(
+            "docker daemon or kubernetes cluster not reachable in current environment"
+        )
         return True
 
     print("[INFO] Starting Production deployment...")
