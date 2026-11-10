@@ -1,0 +1,12 @@
+{
+    "status": "local_bundle_verified",
+    "model_name": "Titanic_Survival_Production_Model",
+    "model_version": "1",
+    "run_id": "737141f08de64811a0d7882185647d10",
+    "local_api_url": "http://127.0.0.1:8000/docs",
+    "deployment_bundle": {
+        "model": "deployment\\model.pkl",
+        "preprocessor": "deployment\\preprocessor.pkl",
+        "metadata": "deployment\\model_metadata.json"
+    }
+}

@@ -1,0 +1,32 @@
+name: Lab 13 - End-to-End MLOps
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 * * * *"
+      timezone: "Asia/Kolkata"
+
+jobs:
+  mlops-monitoring:
+    runs-on: [self-hosted, Windows, X64]
+
+    steps:
+      - name: Run MLOps monitoring trigger
+        shell: powershell
+        run: |
+          & ".\.venv\Scripts\python.exe" ".\src\mlops_pipeline\12_monitor_trigger.py"
+
+      - name: Show monitoring result
+        shell: powershell
+        run: |
+          if (Test-Path ".\outputs\monitoring\monitor_trigger_report.json") {
+              Get-Content ".\outputs\monitoring\monitor_trigger_report.json"
+          } else {
+              Write-Host "Monitoring report was not generated."
+          }
+
+      - name: Verify Kubernetes
+        shell: powershell
+        run: |
+          kubectl get deployment titanic-api
+          kubectl get pods

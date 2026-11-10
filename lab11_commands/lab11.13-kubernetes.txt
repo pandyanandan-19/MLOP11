@@ -1,0 +1,24 @@
+# Kubernetes Deployment Reference - Titanic Survival API
+
+# 1. Cluster checks
+kubectl cluster-info
+kubectl get nodes
+
+# 2. Apply Deployment and Service manifests
+kubectl apply -f k8s/deployment.yaml
+kubectl apply -f k8s/service.yaml
+
+# 3. Inspect rollout and pods
+kubectl get deployments
+kubectl get pods
+kubectl describe deployment titanic-api
+kubectl get service titanic-api-service
+kubectl get endpoints titanic-api-service
+
+# 4. Scale replicas and test self-healing
+kubectl scale deployment titanic-api --replicas=3
+kubectl get pods -w
+kubectl delete pod <pod-name>
+
+# 5. Port-forward for local verification
+kubectl port-forward service/titanic-api-service 8000:8000

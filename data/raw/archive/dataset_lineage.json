@@ -1,0 +1,12 @@
+[
+  {
+    "dataset_version": "v02",
+    "archive_file": "data/raw/archive/titanic_v01.csv",
+    "source_file": "data/raw/new_titanic.csv",
+    "new_data_hash": "6aa10cc7db48191974c7be841adfb76af2b611267c553cf76143b92ece8c30d8",
+    "previous_rows": 891,
+    "new_rows": 30,
+    "current_rows": 921,
+    "timestamp": "2026-11-10T08:10:58.184907+00:00"
+  }
+]

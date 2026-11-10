@@ -1,0 +1,40 @@
+{
+    "dataset_name": "Titanic Passenger Survival",
+    "target_column": "Survived",
+    "train_shape_raw": [
+        742,
+        10
+    ],
+    "test_shape_raw": [
+        179,
+        10
+    ],
+    "train_shape_transformed": [
+        742,
+        15
+    ],
+    "test_shape_transformed": [
+        179,
+        15
+    ],
+    "numerical_features": [
+        "Age",
+        "Fare",
+        "SibSp",
+        "Parch",
+        "FamilySize"
+    ],
+    "categorical_features": [
+        "Pclass",
+        "Sex",
+        "Embarked",
+        "Title",
+        "IsAlone"
+    ],
+    "split_test_size": 0.2,
+    "split_random_state": 42,
+    "fixed_test_set": true,
+    "test_passenger_ids_path": "data/processed\\test_passenger_ids.csv",
+    "raw_train_path": "data/processed\\X_train_raw.csv",
+    "raw_test_path": "data/processed\\X_test_raw.csv"
+}

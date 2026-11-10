@@ -1,23 +1,52 @@
 TITANIC SURVIVAL ML - START HERE
+=================================
 
-1. Open this folder in VS Code.
-2. Open Terminal.
-3. Create environment:
-   python -m venv .venv
-4. Activate:
-   .venv\Scripts\activate
-5. Install:
+1. Open this folder in VS Code or Terminal.
+2. Activate your virtual environment:
+   .venv\Scripts\activate   (Windows)
+   source .venv/bin/activate (Linux/macOS)
+
+3. Install required packages (if not already installed):
    pip install -r requirements.txt
-6. Run in this order:
-   python src/data_analysis.py
-   python src/eda.py
-   python src/train_models.py
-   python src/evaluate.py
-   python src/generate_predictions.py
-   python src/predict.py
 
-The final trained model is saved as:
-models/titanic_model.pkl
+4. Run Labs 1-6 (Foundational MLOps Modules):
+   * Lab 1 (Data Validation):
+     python pipelines/run_lab1_validation.py
+   * Lab 2 (Preprocessing Pipeline & Output Validation):
+     python pipelines/run_lab2_preprocessing.py
+   * Lab 3 (Baseline Pipeline & Error Analysis):
+     python pipelines/run_lab3_baseline.py
+   * Lab 4 (MLflow Tracking & Visualizations):
+     python pipelines/run_lab4_tracking.py
+   * Lab 5 (Production Schema Validation & Pipeline):
+     python pipelines/run_lab5_pipeline.py
+   * Reproducibility Validation:
+     python src/validate_reproducibility.py
+   * Lab 6 (MLflow Model Registry & Champion Lifecycle):
+     python pipelines/run_lab6_registry.py
 
-Test predictions are saved as:
-outputs/results/titanic_predictions.csv
+5. Run Labs 7-13 (Integrated End-to-End MLOps Platform):
+   * End-to-End 10-Stage Pipeline (with forced run):
+     python src/mlops_pipeline/titanic_survival_pipeline.py --force
+   * Failure Injection & Recovery Suite (Lab 9):
+     python src/mlops_pipeline/10_failure_injection.py
+   * FastAPI Serving & Tests (Lab 10):
+     uvicorn api.main:app --host 0.0.0.0 --port 8000
+     pytest tests/test_api.py -v
+     pytest tests/test_performance.py -v -s
+   * Drift, Monitoring & Retraining (Lab 12-13):
+     python src/mlops_pipeline/12_create_evolved_dataset.py
+     python src/mlops_pipeline/12_data_drift.py
+     python src/mlops_pipeline/12_prediction_drift.py
+     python src/mlops_pipeline/12_create_concept_drift_dataset.py
+     python src/mlops_pipeline/12_concept_drift.py
+     python src/mlops_pipeline/12_monitor_trigger.py
+
+Key outputs and artifacts:
+- Processed splits and matrices: data/processed/
+- Models, Preprocessor, and V2 artifacts: models/
+- Deployment bundle: deployment/
+- Metrics, quality gate, lifecycle, API, and failure reports: reports/
+- Drift, monitoring, retraining, and inference outputs: outputs/
+- Pipeline and inference logs: logs/
+- Validation reports and plots: artifacts/

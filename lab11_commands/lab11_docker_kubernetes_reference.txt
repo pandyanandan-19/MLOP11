@@ -1,0 +1,55 @@
+LAB 11 - DOCKER + KUBERNETES REFERENCE NOTES (Titanic_Survival_ML)
+
+============================================================
+MLFLOW -> DEPLOYMENT ARCHITECTURE
+============================================================
+MLflow Registry -> Production Model Version -> Run ID
+-> Matching model + preprocessor -> Deployment Bundle:
+deployment/
+  |-- model.pkl
+  |-- preprocessor.pkl
+  \-- model_metadata.json
+-> Docker Image (titanic-survival-api:1.0 / model-vN)
+-> Kubernetes Deployment (titanic-api) -> Pods -> Service (titanic-api-service:8000)
+
+============================================================
+DOCKER COMMANDS
+============================================================
+Build:
+  docker build -t titanic-survival-api:1.0 .
+
+Run:
+  docker run --name titanic-api -p 8000:8000 titanic-survival-api:1.0
+
+Inspect / Logs:
+  docker ps -a --filter "name=titanic-api"
+  docker logs --tail 30 titanic-api
+  docker inspect titanic-api --format "{{.State.Status}} | ExitCode={{.State.ExitCode}}"
+
+API Endpoints:
+  GET  /
+  GET  /health
+  GET  /metadata
+  POST /predict
+  POST /predict/batch
+  Docs: http://localhost:8000/docs
+
+Local vs Container Parity:
+  python tests/test_local_vs_container.py
+
+Failure Simulation & Recovery:
+  docker exec titanic-api mv /app/deployment/model.pkl /app/deployment/model_backup.pkl
+  docker restart titanic-api
+  docker rm titanic-api
+  docker run --name titanic-api -p 8000:8000 titanic-survival-api:1.0
+
+============================================================
+KUBERNETES COMMANDS
+============================================================
+  kubectl apply -f k8s/deployment.yaml
+  kubectl apply -f k8s/service.yaml
+  kubectl scale deployment titanic-api --replicas=3
+  kubectl get deployments
+  kubectl get pods
+  kubectl get endpoints titanic-api-service
+  kubectl rollout status deployment/titanic-api --timeout=120s

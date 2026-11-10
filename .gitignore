@@ -1,4 +1,44 @@
+# Environments
+venv/
+env/
 .venv/
+
+# Python
 __pycache__/
-*.pyc
+*.py[cod]
+.pytest_cache/
+
+# Jupyter
 .ipynb_checkpoints/
+
+# Raw incoming/archived data (keep primary dataset tracked)
+data/raw/*.csv
+!data/raw/titanic.csv
+data/raw/archive/*.csv
+
+# Data generated during preprocessing
+data/processed/*.npy
+data/processed/*.csv
+!data/processed/.gitkeep
+
+# Model artifacts
+models/*.pkl
+deployment/*.pkl
+!models/.gitkeep
+
+# Outputs and logs
+logs/*
+!logs/.gitkeep
+outputs/*
+!outputs/.gitkeep
+
+# MLflow
+mlruns/
+mlflow.db
+
+# Generated artifacts and reports
+artifacts/*
+!artifacts/.gitkeep
+
+# VS Code
+.vscode/

@@ -1,0 +1,13 @@
+{
+    "status": "success",
+    "model_name": "Titanic_Survival_Production_Model",
+    "decision_metric": "recall",
+    "candidate_version": 14,
+    "candidate_run_id": "2990999221f94baa87d2ac163d131cef",
+    "candidate_metric": 0.7536231884057971,
+    "production_version_before": 1,
+    "production_metric_before": 0.7681159420289855,
+    "promoted": false,
+    "decision": "ARCHIVED",
+    "production_version_after": 1
+}

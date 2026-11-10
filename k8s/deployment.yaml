@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: titanic-api
+  labels:
+    app: titanic-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: titanic-api
+  template:
+    metadata:
+      labels:
+        app: titanic-api
+    spec:
+      containers:
+        - name: titanic-api
+          image: titanic-survival-api:1.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8000

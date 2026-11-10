@@ -1,97 +1,65 @@
 import os
-import joblib
+import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-
+import joblib
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import (
-    accuracy_score,
-    precision_score,
-    recall_score,
-    f1_score,
-    roc_auc_score,
-    confusion_matrix,
-    ConfusionMatrixDisplay,
-    classification_report,
-    RocCurveDisplay
-)
-
-from preprocessing import load_data
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 
 
-os.makedirs("outputs/plots", exist_ok=True)
-os.makedirs("outputs/results", exist_ok=True)
+def run_evaluation():
+    print("Starting Model Evaluation...")
 
+    # 1. Load test data and the trained model
+    X_test_final = np.load('data/processed/X_test_final.npy')
+    y_test = np.load('data/processed/y_test.npy')
+    model = joblib.load('models/random_forest_baseline.pkl')
 
-def main():
-    X, y, _ = load_data()
+    # 2. Make predictions
+    y_pred = model.predict(X_test_final)
 
-    X_train, X_valid, y_train, y_valid = train_test_split(
-        X,
-        y,
-        test_size=0.20,
-        random_state=42,
-        stratify=y
+    # 3. Calculate metrics
+    acc = accuracy_score(y_test, y_pred)
+    prec = precision_score(y_test, y_pred, zero_division=0)
+    rec = recall_score(y_test, y_pred, zero_division=0)
+    f1 = f1_score(y_test, y_pred, zero_division=0)
+
+    print("\n--- Model Evaluation Report ---")
+    print(f"Accuracy : {acc:.4f}")
+    print(f"Precision: {prec:.4f}")
+    print(f"Recall   : {rec:.4f}")
+    print(f"F1-Score : {f1:.4f}")
+    print("-------------------------------\n")
+
+    # 4. Error Analysis Export
+    data_path = 'data/raw/titanic.csv'
+    if not os.path.exists(data_path):
+        data_path = 'data/train.csv'
+    df = pd.read_csv(data_path)
+
+    _, X_test_raw = train_test_split(
+        df.drop('Survived', axis=1), test_size=0.2, random_state=42, stratify=df['Survived']
     )
 
-    model_path = "models/titanic_model.pkl"
-    model = joblib.load(model_path)
+    errors_df = X_test_raw.copy()
+    errors_df['Actual_Survived'] = y_test
+    errors_df['Predicted_Survived'] = y_pred
 
-    y_pred = model.predict(X_valid)
+    false_negatives = errors_df[(errors_df['Actual_Survived'] == 1) & (errors_df['Predicted_Survived'] == 0)]
+    false_positives = errors_df[(errors_df['Actual_Survived'] == 0) & (errors_df['Predicted_Survived'] == 1)]
 
-    if hasattr(model, "predict_proba"):
-        y_prob = model.predict_proba(X_valid)[:, 1]
-    else:
-        y_prob = None
+    os.makedirs('outputs', exist_ok=True)
+    false_negatives.to_csv('outputs/false_negatives.csv', index=False)
+    false_positives.to_csv('outputs/false_positives.csv', index=False)
 
-    metrics = {
-        "Accuracy": accuracy_score(y_valid, y_pred),
-        "Precision": precision_score(y_valid, y_pred, zero_division=0),
-        "Recall": recall_score(y_valid, y_pred, zero_division=0),
-        "F1 Score": f1_score(y_valid, y_pred, zero_division=0)
-    }
+    print("Evaluation complete and error analysis files saved!")
+    print(f"Saved: outputs/false_negatives.csv ({len(false_negatives)} rows)")
+    print(f"Saved: outputs/false_positives.csv ({len(false_positives)} rows)")
 
-    if y_prob is not None:
-        metrics["ROC-AUC"] = roc_auc_score(y_valid, y_prob)
+    return {"accuracy": acc, "precision": prec, "recall": rec, "f1_score": f1}
 
-    print("=" * 60)
-    print("FINAL MODEL EVALUATION")
-    print("=" * 60)
 
-    for key, value in metrics.items():
-        print(f"{key}: {value:.4f}")
-
-    print("\nClassification Report:")
-    print(classification_report(y_valid, y_pred, zero_division=0))
-
-    pd.DataFrame([metrics]).to_csv(
-        "outputs/results/final_model_metrics.csv",
-        index=False
-    )
-
-    # Confusion matrix
-    ConfusionMatrixDisplay.from_predictions(
-        y_valid,
-        y_pred
-    )
-    plt.title("Confusion Matrix - Titanic Survival")
-    plt.tight_layout()
-    plt.savefig("outputs/plots/confusion_matrix.png", dpi=200)
-    plt.close()
-
-    # ROC curve
-    if y_prob is not None:
-        RocCurveDisplay.from_predictions(
-            y_valid,
-            y_prob
-        )
-        plt.title("ROC Curve - Titanic Survival")
-        plt.tight_layout()
-        plt.savefig("outputs/plots/roc_curve.png", dpi=200)
-        plt.close()
-
-    print("\nEvaluation files saved in outputs/")
+main = run_evaluation
 
 
 if __name__ == "__main__":
-    main()
+    run_evaluation()
